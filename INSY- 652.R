@@ -12,15 +12,16 @@ library("rpart")
 library("rpart.plot")
 library("Hmisc")
 library("caTools")
-library("car") #provides VIF(collinerarity) and modelling packages
+library("car")   # provides VIF(collinerarity) and modelling packages
 library("caret") # Machine learning + Modelling
 library("GGally")
 library("e1071") # various stats tools
-library("dplyr") #grammer for manipulating, filtering, mutating tables.
+library("dplyr") # grammer for manipulating, filtering, mutating tables.
 
 
 
   # Office Hours - Wed 1:30 - 3:30
+  setwd("Google Drive/Courses/Predictive Analytics/INSY-652/")
 
 # DATES -------------------------------------------------------
   # Jan 15 - Group Assignment 1
@@ -193,6 +194,8 @@ percent_NA <- function(collumn){
     
 # Class 3-------------------------------------------------------
     
+    
+    
     # import the data and use only use first 1000 rows
     car.df <- read.csv(file="Google Drive/Courses/Predictive Analytics/INSY-652/Datasets/ToyotaCorolla.csv")
     car.df <- car.df[1:1000, ]
@@ -227,63 +230,65 @@ percent_NA <- function(collumn){
 
 
   # Input
-    patients<-read.csv(file="C:/…/patient.txt", header=TRUE)
+    patients<-read.csv(file="Google Drive/Courses/Predictive Analytics/INSY-652/Datasets/patient.txt", header=TRUE)
   # Linear Regression vs. Logistic Regression
     lm1<-lm(disease~age,data=patients)
     lr1<-glm(disease~age,data=patients,family=binomial)
-    plot(patients$age,patients$disease,xlab="Age",ylab="Disease",main="Disease vs. Age",xlim=c(20,90),pch=16)
+    plot(patients$age,patients$disease, xlab="Age", ylab="Disease", main="Disease vs. Age", xlim=c(20,90),pch=16)
     abline(lm1,lty=3)
     curve(predict(lr1,data.frame(age=x),type="resp"),add=TRUE,lwd=2)
     legend("topleft",legend=c("LS","Log."),lty=c(3,1),cex=.9)
 
+    
+  # Dichotomous Predictor
   # Input
-    churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+    churn <- read.csv(file="Google Drive/Courses/Predictive Analytics/INSY-652/Datasets/churn.txt", stringsAsFactors=TRUE)
     table(churn$Churn,churn$VMail.Plan)
     churn$VMP.ind<-ifelse(churn$VMail.Plan=="yes",1,0)
   # Logistic Regression
     lr2<-glm(Churn. ~ VMP.ind,data=churn,family="binomial")
     summary(lr2)
 
-
+  # Polytomous Predictor
   # Input
-    churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+    churn <- read.csv(file="Google Drive/Courses/Predictive Analytics/INSY-652/Datasets/churn.txt", stringsAsFactors=TRUE)
+    churn$CSC              <- factor(churn$CustServ.Calls)
     levels(churn$CSC)
-    levels(churn$CSC)[1:2]<-"Low"
-    levels(churn$CSC)[2:3]<-"Medium"
-    levels(churn$CSC)[3:8]<-"High"
-    churn$CSC_Med<-ifelse(churn$CSC=="Medium",1,0)
-    churn$CSC_Hi<-ifelse(churn$CSC=="High",1,0)
+    levels(churn$CSC)[1:2] <- "Low"
+    levels(churn$CSC)[2:3] <- "Medium"
+    levels(churn$CSC)[3:8] <- "High"
+    churn$CSC_Med          <- ifelse(churn$CSC=="Medium", 1, 0)
+    churn$CSC_Hi           <- ifelse(churn$CSC=="High", 1, 0)
   # Logistic Regression
     lr3<-glm(Churn.~CSC_Med+CSC_Hi,data=churn,family="binomial")
     summary(lr3)
 
 
 
-# Input
+# Continous prediction
   churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
   # Logistic Regression
   lr4<-glm(Churn.~Day.Mins,data=churn,family="binomial")
   summary(lr4)
 
-
+# Multiple Logistic Regression
+  #IF overall P is very low, but inidicidual P is not signifigant.There is likely MULTICOLLINEARITY! 
 # Input
-  churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+  churn <- read.csv(file="./datasets/churn.txt", stringsAsFactors=TRUE)
   churn$CSC<-factor(churn$CustServ.Calls)
   levels(churn$CSC)
-  levels(churn$CSC)[1:2]<-"Low"
-  levels(churn$CSC)[2:3]<-"Medium"
-  levels(churn$CSC)[3:8]<-"High"
+  levels(churn$CSC)[1:2] <- "Low"
+  levels(churn$CSC)[2:3] <- "Medium"
+  levels(churn$CSC)[3:8] <- "High"
   churn$CSC_Med<-ifelse(churn$CSC=="Medium",1,0)
   churn$CSC_Hi<-ifelse(churn$CSC=="High",1,0)
   churn$IntlP.ind<-ifelse(churn$Int.l.Plan=="yes",1,0)
   VMP.ind<-ifelse(churn$VMail.Plan=="yes",1,0)
   
-
-
 # Logistic Regression
-  lr5<-glm(Churn.~IntlP.ind+VMP.ind+CSC_Hi+Day.Mins+Eve.Mins
-  +Night.Mins+Intl.Mins,data=churn,family="binomial")
+  lr5<-glm(Churn.~IntlP.ind+VMP.ind+CSC_Hi+Day.Mins+Eve.Mins+Night.Mins+Intl.Mins,data=churn,family="binomial")
   summary(lr5)
   # G-Statistics
+  install.packages("lmtest")
   library(lmtest)
   lrtest(lr5)

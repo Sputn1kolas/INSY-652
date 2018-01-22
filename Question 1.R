@@ -8,4 +8,9 @@ ggplot(cereal, aes(Sodium, Rating )) + geom_point() + geom_smooth(method = "lm")
 summary(lm(Rating ~ Sodium, cereal))
 
 cereal %>% 
-  select(Rating < 80) 
+  subset(Rating < 80) %>% 
+  {.} -> cereal_subset
+
+  summary(lm(Rating ~ Sodium, cereal_subset))
+
+  

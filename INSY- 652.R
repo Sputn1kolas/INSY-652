@@ -191,3 +191,99 @@ percent_NA <- function(collumn){
       # best subsets: works when predictor is not large, run all models with one predictor, pick the best (X), then run all models with X + 1
       
     
+# Class 3-------------------------------------------------------
+    
+    # import the data and use only use first 1000 rows
+    car.df <- read.csv(file="Google Drive/Courses/Predictive Analytics/INSY-652/Datasets/ToyotaCorolla.csv")
+    car.df <- car.df[1:1000, ]
+   # select variables for regression
+    car.df$
+   selected.var <- c(3, 4, 7, 8, 9, 10, 12, 13, 14, 17, 18)
+   # partition data
+   set.seed(1) # set seed for reproducing the partition
+   train.index <- sample(c(1:1000), 600)
+   train.df <- car.df[train.index, selected.var]
+   valid.df <- car.df[-train.index, selected.var]
+   all.df <- car.df[, selected.var]
+
+  # linear regression model
+    car.lm <- lm(Price ~ ., data = train.df)
+    car.lm2 <- lm(Price ~ ., data = all.df)
+    summary(car.lm)
+    summary(car.lm2)
+    # predictive task
+    
+    require(forecast)
+    car.lm.pred <- predict(car.lm, valid.df)
+    some.residuals <- valid.df$Price[1:20] - car.lm.pred[1:20]
+    data.frame("Predicted" = car.lm.pred[1:20], "Actual" = valid.df$Price[1:20],"Residual" = some.residuals)
+    accuracy(car.lm.pred, valid.df$Price)
+
+  # plotting the distribution of residual
+    car.lm.pred <- predict(car.lm, valid.df)
+    all.residuals <- valid.df$Price - car.lm.pred
+    length(all.residuals[which(all.residuals > -1406 & all.residuals < 1406)])/400
+    hist(all.residuals, breaks = 25, xlab = "Residuals", main = "")
+
+
+  # Input
+    patients<-read.csv(file="C:/…/patient.txt", header=TRUE)
+  # Linear Regression vs. Logistic Regression
+    lm1<-lm(disease~age,data=patients)
+    lr1<-glm(disease~age,data=patients,family=binomial)
+    plot(patients$age,patients$disease,xlab="Age",ylab="Disease",main="Disease vs. Age",xlim=c(20,90),pch=16)
+    abline(lm1,lty=3)
+    curve(predict(lr1,data.frame(age=x),type="resp"),add=TRUE,lwd=2)
+    legend("topleft",legend=c("LS","Log."),lty=c(3,1),cex=.9)
+
+  # Input
+    churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+    table(churn$Churn,churn$VMail.Plan)
+    churn$VMP.ind<-ifelse(churn$VMail.Plan=="yes",1,0)
+  # Logistic Regression
+    lr2<-glm(Churn. ~ VMP.ind,data=churn,family="binomial")
+    summary(lr2)
+
+
+  # Input
+    churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+    levels(churn$CSC)
+    levels(churn$CSC)[1:2]<-"Low"
+    levels(churn$CSC)[2:3]<-"Medium"
+    levels(churn$CSC)[3:8]<-"High"
+    churn$CSC_Med<-ifelse(churn$CSC=="Medium",1,0)
+    churn$CSC_Hi<-ifelse(churn$CSC=="High",1,0)
+  # Logistic Regression
+    lr3<-glm(Churn.~CSC_Med+CSC_Hi,data=churn,family="binomial")
+    summary(lr3)
+
+
+
+# Input
+  churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+  # Logistic Regression
+  lr4<-glm(Churn.~Day.Mins,data=churn,family="binomial")
+  summary(lr4)
+
+
+# Input
+  churn <- read.csv(file="C:/…/churn.txt", stringsAsFactors=TRUE)
+  churn$CSC<-factor(churn$CustServ.Calls)
+  levels(churn$CSC)
+  levels(churn$CSC)[1:2]<-"Low"
+  levels(churn$CSC)[2:3]<-"Medium"
+  levels(churn$CSC)[3:8]<-"High"
+  churn$CSC_Med<-ifelse(churn$CSC=="Medium",1,0)
+  churn$CSC_Hi<-ifelse(churn$CSC=="High",1,0)
+  churn$IntlP.ind<-ifelse(churn$Int.l.Plan=="yes",1,0)
+  VMP.ind<-ifelse(churn$VMail.Plan=="yes",1,0)
+  
+
+
+# Logistic Regression
+  lr5<-glm(Churn.~IntlP.ind+VMP.ind+CSC_Hi+Day.Mins+Eve.Mins
+  +Night.Mins+Intl.Mins,data=churn,family="binomial")
+  summary(lr5)
+  # G-Statistics
+  library(lmtest)
+  lrtest(lr5)
